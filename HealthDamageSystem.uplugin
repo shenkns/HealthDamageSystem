@@ -1,0 +1,41 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "Health-Damage System",
+	"Description": "Health-Damage System for advanced health stats",
+	"Category": "Gameplay",
+	"CreatedBy": "shenkns",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": false,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "HealthDamageSystem",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"WhitelistPlatforms": [
+				"Win64",
+				"Android",
+				"IOS",
+				"Linux",
+				"Mac"
+			]
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "DataSystem",
+			"Enabled": true
+		},
+		{
+			"Name": "LogSystem",
+			"Enabled": true
+		}
+	]
+}
