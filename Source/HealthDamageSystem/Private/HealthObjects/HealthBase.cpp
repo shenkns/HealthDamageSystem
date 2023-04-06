@@ -32,6 +32,7 @@ float UHealthBase::AddHealth(float Amount)
 	const float PreviousHealth = CurrentHealth;
 	
 	CurrentHealth = FMath::Clamp(CurrentHealth + Amount, 0.f, MaxHealth);
+	OnHealthChanged.Broadcast(CurrentHealth, CurrentHealth - PreviousHealth);
 
 	if(PreviousHealth + Amount <= 0.f)
 	{
