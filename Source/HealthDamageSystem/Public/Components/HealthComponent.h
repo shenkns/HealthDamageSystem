@@ -49,7 +49,7 @@ public:
 
 	virtual bool ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags) override;
 
-	virtual void GetLifetimeReplicatedProps (TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	// Getters
 	UFUNCTION(BlueprintPure, Category = "Health", meta = (CompactNodeTitle = "HealthObject", DeterminesOutputType = "Class"))

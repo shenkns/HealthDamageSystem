@@ -13,6 +13,13 @@ void UHealthBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 
 	DOREPLIFETIME(UHealthBase, MaxHealth);
 	DOREPLIFETIME(UHealthBase, CurrentHealth);
+
+	DOREPLIFETIME(UHealthBase, HealthHandler)
+	
+	if(const UBlueprintGeneratedClass* BPClass = Cast<UBlueprintGeneratedClass>(GetClass()))
+	{
+		BPClass->GetLifetimeBlueprintReplicationList(OutLifetimeProps);
+	}
 }
 
 UHealthComponent* UHealthBase::GetOwningHealthComponent() const
@@ -22,33 +29,45 @@ UHealthComponent* UHealthBase::GetOwningHealthComponent() const
 
 float UHealthBase::AddHealth(float Amount)
 {
-	const float OldHealth = CurrentHealth;
+	const float PreviousHealth = CurrentHealth;
+	
+	CurrentHealth = FMath::Clamp(CurrentHealth + Amount, 0.f, MaxHealth);
 
-	CurrentHealth = FMath::Clamp(OldHealth + Amount, 0.f, MaxHealth);
-
-	const float HealthDelta = CurrentHealth - OldHealth;
-
-	OnHealthChanged.Broadcast(CurrentHealth, HealthDelta);
-
-	LOG(LogHealthDamageSystem, "%s Health Changed On %f From %f To %f", *GetName(), HealthDelta, OldHealth, CurrentHealth)
-
-	if(OldHealth + Amount <= 0.f)
+	if(PreviousHealth + Amount <= 0.f)
 	{
 		bIsEnded = true;
-		OnHealthEnded.Broadcast();
-
-		LOG(LogHealthDamageSystem, "%s Health Ended", *GetName())
 	}
 
-	return HealthDelta;
+	return CurrentHealth - PreviousHealth;
 }
 
-void UHealthBase::InitHealthObject()
+void UHealthBase::InitHealthObject(UHealthHandlerDataAsset* HealthHandlerDataAsset)
 {
+	HealthHandler = HealthHandlerDataAsset;
+	
 	if(bStartMaxHealth)
 	{
 		CurrentHealth = MaxHealth;
 	}
 
 	LOG(LogHealthDamageSystem, "%s Health Object Intializaed", *GetName())
+}
+
+void UHealthBase::OnRepCurrentHealth()
+{
+	OnHealthChanged.Broadcast(CurrentHealth, CurrentHealth - OldHealth);
+
+	LOG(LogHealthDamageSystem, "%s Health Changed On %f From %f To %f", *GetName(), CurrentHealth - OldHealth, OldHealth, CurrentHealth)
+
+	OldHealth = CurrentHealth;
+}
+
+void UHealthBase::OnRepIsEnded()
+{
+	if(bIsEnded)
+	{
+		OnHealthEnded.Broadcast();
+
+		LOG(LogHealthDamageSystem, "%s Health Ended", *GetName())
+	}
 }

@@ -18,25 +18,33 @@ void UHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	for(const TTuple<UHealthHandlerDataAsset*, UHealthBase*>& Pair : HealthObjectsMap)
+	if(GetOwner()->HasAuthority())
 	{
-		Pair.Value->Rename(nullptr, this);
-		Pair.Value->InitHealthObject();
+		for(const TTuple<UHealthHandlerDataAsset*, UHealthBase*>& Pair : HealthObjectsMap)
+		{
+			Pair.Value->Rename(nullptr, this);
+			Pair.Value->InitHealthObject(Pair.Key);
 
-		HealthObjectsArray.Add(Pair.Value);
+			HealthObjectsArray.Add(Pair.Value);
+		}
+
+		LOG(LogHealthDamageSystem, "%d Health Objects Initialized", HealthObjectsArray.Num())
 	}
-
-	LOG(LogHealthDamageSystem, "%d Health Objects Initialized", HealthObjectsMap.Num())
 }
 
 bool UHealthComponent::ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags)
 {
+	bool bWroteSomething = Super::ReplicateSubobjects(Channel, Bunch, RepFlags);
+
 	for(UHealthBase* HealthObject : HealthObjectsArray)
 	{
-		
+		if(HealthObject)
+		{
+			bWroteSomething |= Channel->ReplicateSubobject(HealthObject, *Bunch, *RepFlags);
+		}
 	}
 
-	return Super::ReplicateSubobjects(Channel, Bunch, RepFlags);
+	return bWroteSomething;
 }
 
 void UHealthComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -48,7 +56,11 @@ void UHealthComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 
 UHealthBase* UHealthComponent::GetHealthObjectFromHandler(TSubclassOf<UHealthBase> Class, UHealthHandlerDataAsset* Handler) const
 {
-	UHealthBase* const* HealthObjectPointer = HealthObjectsMap.Find(Handler);
+	UHealthBase* const* HealthObjectPointer = HealthObjectsArray.FindByPredicate([&](const UHealthBase* HealthObject)
+	{
+		return HealthObject->GetHealthHandler() == Handler;
+	});
+	
 	return HealthObjectPointer ? *HealthObjectPointer : nullptr;
 }
 
@@ -57,11 +69,11 @@ UHealthBase* UHealthComponent::GetPrimaryHealthObject(TSubclassOf<UHealthBase> C
 	UHealthBase* PrimaryHealthObject = nullptr;
 	int PrimaryHealthObjectPriority = -1;
 
-	for(const TTuple<UHealthHandlerDataAsset*, UHealthBase*> Pair : HealthObjectsMap)
+	for(UHealthBase* HealthObject : HealthObjectsArray)
 	{
-		if(Pair.Value->GetPriority() < PrimaryHealthObjectPriority || PrimaryHealthObjectPriority == -1)
+		if(HealthObject->GetPriority() < PrimaryHealthObjectPriority || PrimaryHealthObjectPriority == -1)
 		{
-			PrimaryHealthObject = Pair.Value;
+			PrimaryHealthObject = HealthObject;
 			PrimaryHealthObjectPriority = PrimaryHealthObject->GetPriority();
 		}
 	}
@@ -71,8 +83,7 @@ UHealthBase* UHealthComponent::GetPrimaryHealthObject(TSubclassOf<UHealthBase> C
 
 TArray<UHealthBase*> UHealthComponent::GetHealthObjectsSortedByPriority() const
 {
-	TArray<UHealthBase*> HealthObjectsSorted;
-	HealthObjectsMap.GenerateValueArray(HealthObjectsSorted);
+	TArray<UHealthBase*> HealthObjectsSorted = HealthObjectsArray;
 
 	HealthObjectsSorted.Sort([&](const UHealthBase &HealthObjectA, const UHealthBase &HealthObjectB)
 	{
@@ -116,25 +127,21 @@ float UHealthComponent::AddHealth(float Amount, AController* Instigator, AActor*
 	{
 		Amount -= HealthObject->AddHealth(Amount);
 		
+		if(HealthObject == GetPrimaryHealthObject<UHealthBase>())
+		{
+			if(HealthObject->GetIsHealthEnded())
+			{
+				bIsDeath = true;
+				OnDeath.Broadcast(Instigator, Causer);
+
+				break;
+			}
+		}
+		
 		if(FMath::IsNearlyEqual(0.f, Amount, HealthErrorTolerance))
 		{
-			if(HealthObject == GetPrimaryHealthObject<UHealthBase>())
-			{
-				if(HealthObject->GetIsHealthEnded())
-				{
-					bIsDeath = true;
-					OnDeath.Broadcast(Instigator, Causer);
-				}
-			}
-
-			return StartAmount - Amount;
+			break;
 		}
-	}
-
-	if(StartAmount < 0)
-	{
-		bIsDeath = true;
-		OnDeath.Broadcast(Instigator, Causer);
 	}
 
 	return StartAmount - Amount;
