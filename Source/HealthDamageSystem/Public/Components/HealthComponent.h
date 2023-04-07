@@ -85,9 +85,12 @@ protected:
 template <typename T>
 T* UHealthComponent::GetHealthObjectFromHandler(UHealthHandlerDataAsset* Handler) const
 {
-	UHealthBase* const* HealthObject = HealthObjectsMap.Find(Handler);
+	const UHealthBase* Out = HealthObjectsArray.FindByPredicate([&](const UHealthBase* Src)
+	{
+		return Src->GetHealthHandler() == Handler;
+	});
 
-	return HealthObject ? static_cast<T*>(*HealthObject) : nullptr;
+	return Out ? static_cast<T*>(*Out) : nullptr;
 }
 
 template <typename T>
@@ -96,11 +99,11 @@ T* UHealthComponent::GetPrimaryHealthObject() const
 	UHealthBase* PrimaryHealthObject = nullptr;
 	int PrimaryHealthObjectPriority = -1;
 
-	for(const TTuple<UHealthHandlerDataAsset*, UHealthBase*> Pair : HealthObjectsMap)
+	for(UHealthBase* HealthObject : HealthObjectsArray)
 	{
-		if(Pair.Value->GetPriority() < PrimaryHealthObjectPriority || PrimaryHealthObjectPriority == -1)
+		if(HealthObject->GetPriority() < PrimaryHealthObjectPriority || PrimaryHealthObjectPriority == -1)
 		{
-			PrimaryHealthObject = Pair.Value;
+			PrimaryHealthObject = HealthObject;
 			PrimaryHealthObjectPriority = PrimaryHealthObject->GetPriority();
 		}
 	}
