@@ -93,7 +93,7 @@ TArray<UHealthBase*> UHealthComponent::GetHealthObjectsSortedByPriority() const
 	return HealthObjectsSorted;
 }
 
-float UHealthComponent::Damage(AActor* Target, float Amount, AController* Instigator, AActor* Causer)
+float UHealthComponent::Damage(AActor* Target, float Amount, APlayerState* Instigator, UObject* Causer)
 {
 	if(!Target) return 0.f;
 	
@@ -105,7 +105,7 @@ float UHealthComponent::Damage(AActor* Target, float Amount, AController* Instig
 	return 0.f;
 }
 
-float UHealthComponent::Recover(AActor* Target, float Amount, AController* Instigator, AActor* Causer)
+float UHealthComponent::Recover(AActor* Target, float Amount, APlayerState* Instigator, UObject* Causer)
 {
 	if(!Target) return 0.f;
 	
@@ -117,7 +117,7 @@ float UHealthComponent::Recover(AActor* Target, float Amount, AController* Insti
 	return 0.f;
 }
 
-float UHealthComponent::AddHealth(float Amount, AController* Instigator, AActor* Causer)
+float UHealthComponent::AddHealth(float Amount, APlayerState* Instigator, UObject* Causer)
 {
 	if(bIsDeath) return 0.f;
 

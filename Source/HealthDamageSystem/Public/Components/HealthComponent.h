@@ -11,9 +11,9 @@
 class UHealthHandlerDataAsset;
 class UHealthBase;
 class AActor;
-class AController;
+class APlayerState;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FDeathEvent, AController*, Instigator, AActor*, Causer);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FDeathEvent, APlayerState*, Instigator, UObject*, Causer);
 
 UCLASS(ClassGroup=(Health), meta=(BlueprintSpawnableComponent))
 class HEALTHDAMAGESYSTEM_API UHealthComponent : public UActorComponent
@@ -72,14 +72,14 @@ public:
 
 	// Static Health Actions
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "HealthDamageSystem", meta = (CompactNodeTitle = "Damage"))
-	static float Damage(AActor* Target, float Amount, AController* Instigator, AActor* Causer);
+	static float Damage(AActor* Target, float Amount, APlayerState* Instigator, UObject* Causer);
 	
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "HealthDamageSystem", meta = (CompactNodeTitle = "Recover"))
-	static float Recover(AActor* Target, float Amount, AController* Instigator, AActor* Causer);
+	static float Recover(AActor* Target, float Amount, APlayerState* Instigator, UObject* Causer);
 
 protected:
 
-	float AddHealth(float Amount, AController* Instigator, AActor* Causer);
+	float AddHealth(float Amount, APlayerState* Instigator, UObject* Causer);
 };
 
 template <typename T>
