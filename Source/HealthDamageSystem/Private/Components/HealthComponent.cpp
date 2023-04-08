@@ -6,6 +6,7 @@
 #include "LogSystem.h"
 #include "Net/UnrealNetwork.h"
 #include "Engine/ActorChannel.h"
+#include "GameFramework/PlayerState.h"
 
 UHealthComponent::UHealthComponent()
 {
