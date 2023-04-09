@@ -74,7 +74,7 @@ public:
 	bool GetIsHealthEnded() const { return bIsEnded; }
 
 	// Health Actions
-	UFUNCTION(BlueprintCallable, Category = "Health", meta = (CompactNodeTitle = "AddHealth"))
+	UFUNCTION(BlueprintNativeEvent, Category = "Health", meta = (CompactNodeTitle = "AddHealth"))
 	float AddHealth(float Amount);
 
 	void InitHealthObject(UHealthHandlerDataAsset* HandlerDataAsset);

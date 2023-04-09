@@ -27,7 +27,7 @@ UHealthComponent* UHealthBase::GetOwningHealthComponent() const
 	return GetTypedOuter<UHealthComponent>();
 }
 
-float UHealthBase::AddHealth(float Amount)
+float UHealthBase::AddHealth_Implementation(float Amount)
 {
 	const float PreviousHealth = CurrentHealth;
 	
