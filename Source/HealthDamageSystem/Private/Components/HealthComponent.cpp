@@ -133,7 +133,7 @@ float UHealthComponent::AddHealth(float Amount, APlayerState* Instigator, UObjec
 			if(HealthObject->GetIsHealthEnded())
 			{
 				bIsDeath = true;
-				OnDeath.Broadcast(Instigator, Causer);
+				OnDeath.Broadcast(this, Instigator, Causer);
 
 				break;
 			}

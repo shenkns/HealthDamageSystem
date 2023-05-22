@@ -12,8 +12,9 @@ class UHealthHandlerDataAsset;
 class UHealthBase;
 class AActor;
 class APlayerState;
+class UHealthComponent;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FDeathEvent, APlayerState*, Instigator, UObject*, Causer);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FDeathEvent, UHealthComponent*, Target, APlayerState*, Instigator, UObject*, Causer);
 
 UCLASS(ClassGroup=(Health), meta=(BlueprintSpawnableComponent))
 class HEALTHDAMAGESYSTEM_API UHealthComponent : public UActorComponent
