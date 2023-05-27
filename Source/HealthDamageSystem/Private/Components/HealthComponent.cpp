@@ -53,12 +53,16 @@ void UHealthComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	
 	DOREPLIFETIME(UHealthComponent, HealthObjectsArray)
+	
+	DOREPLIFETIME(UHealthComponent, bIsDeath)
 }
 
 UHealthBase* UHealthComponent::GetHealthObjectFromHandler(TSubclassOf<UHealthBase> Class, UHealthHandlerDataAsset* Handler) const
 {
 	UHealthBase* const* HealthObjectPointer = HealthObjectsArray.FindByPredicate([&](const UHealthBase* HealthObject)
 	{
+		if(!HealthObject) return false;
+		
 		return HealthObject->GetHealthHandler() == Handler;
 	});
 	

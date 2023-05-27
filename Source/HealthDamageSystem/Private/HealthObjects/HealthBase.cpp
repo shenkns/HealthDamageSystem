@@ -14,7 +14,9 @@ void UHealthBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 	DOREPLIFETIME(UHealthBase, MaxHealth);
 	DOREPLIFETIME(UHealthBase, CurrentHealth);
 
-	DOREPLIFETIME(UHealthBase, HealthHandler)
+	DOREPLIFETIME(UHealthBase, bIsEnded);
+
+	DOREPLIFETIME(UHealthBase, HealthHandler);
 	
 	if(const UBlueprintGeneratedClass* BPClass = Cast<UBlueprintGeneratedClass>(GetClass()))
 	{
