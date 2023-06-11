@@ -54,6 +54,9 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Health", meta = (CompactNodeTitle = "Reset"))
+	bool Reset(bool bForceMaxHealth);
+
 	// Getters
 	UFUNCTION(BlueprintPure, Category = "Health")
 	UHealthHandlerDataAsset* GetHealthHandler() const { return HealthHandler; }

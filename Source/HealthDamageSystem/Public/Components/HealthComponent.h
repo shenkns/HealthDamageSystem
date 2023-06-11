@@ -52,6 +52,9 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	UFUNCTION(BlueprintCallable, Category = "Health", BlueprintAuthorityOnly, meta = (CompactNodeTitle = "Reset"))
+	bool Reset(bool bForceMaxHealth);
+
 	// Getters
 	UFUNCTION(BlueprintPure, Category = "Health", meta = (CompactNodeTitle = "HealthObject", DeterminesOutputType = "Class"))
 	UHealthBase* GetHealthObjectFromHandler(TSubclassOf<UHealthBase> Class, UHealthHandlerDataAsset* Handler) const;

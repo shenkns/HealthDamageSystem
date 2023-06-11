@@ -57,6 +57,27 @@ void UHealthComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(UHealthComponent, bIsDeath)
 }
 
+bool UHealthComponent::Reset(bool bForceMaxHealth)
+{
+	bool bSuccess = false;
+	for(UHealthBase* HealthBase : HealthObjectsArray)
+	{
+		if(HealthBase)
+		{
+			bSuccess |= HealthBase->Reset(bForceMaxHealth);
+		}
+	}
+
+	if(bSuccess)
+	{
+		bIsDeath = false;
+
+		return true;
+	}
+
+	return false;
+}
+
 UHealthBase* UHealthComponent::GetHealthObjectFromHandler(TSubclassOf<UHealthBase> Class, UHealthHandlerDataAsset* Handler) const
 {
 	UHealthBase* const* HealthObjectPointer = HealthObjectsArray.FindByPredicate([&](const UHealthBase* HealthObject)

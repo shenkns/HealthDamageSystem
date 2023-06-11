@@ -24,6 +24,18 @@ void UHealthBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 	}
 }
 
+bool UHealthBase::Reset(bool bForceMaxHealth)
+{
+	if(bStartMaxHealth || bForceMaxHealth)
+	{
+		CurrentHealth = MaxHealth;
+	}
+
+	bIsEnded = CurrentHealth <= 0.f;
+
+	return !bIsEnded;
+}
+
 UHealthComponent* UHealthBase::GetOwningHealthComponent() const
 {
 	return GetTypedOuter<UHealthComponent>();
