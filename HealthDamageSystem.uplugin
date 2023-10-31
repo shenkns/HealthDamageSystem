@@ -6,7 +6,7 @@
 	"Description": "Health-Damage System for advanced health stats",
 	"Category": "Gameplay",
 	"CreatedBy": "shenkns",
-	"EngineVersion": "4.26",
+	"EngineVersion": "4.27.0",
 	"CanContainContent": false,
 	"IsBetaVersion": false,
 	"IsExperimentalVersion": false,
