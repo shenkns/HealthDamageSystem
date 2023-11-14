@@ -1,12 +1,15 @@
-// Copyright shenkns Health-Damage System Developed With Unreal Engine. All Rights Reserved 2022.
+// Copyright shenkns Health-Damage System Developed With Unreal Engine. All Rights Reserved 2023.
 
 #include "Components/HealthComponent.h"
 
+#include "Log.h"
 #include "Module/HealthDamageSystemModule.h"
-#include "LogSystem.h"
 #include "Net/UnrealNetwork.h"
 #include "Engine/ActorChannel.h"
 #include "GameFramework/PlayerState.h"
+#include "Log/Details/LocalLogCategory.h"
+
+DEFINE_LOG_CATEGORY_LOCAL(LogHealthDamageSystem);
 
 UHealthComponent::UHealthComponent()
 {
@@ -29,7 +32,7 @@ void UHealthComponent::BeginPlay()
 			HealthObjectsArray.Add(Pair.Value);
 		}
 
-		LOG(LogHealthDamageSystem, "%d Health Objects Initialized", HealthObjectsArray.Num())
+		LOG(Display, "{} Health Objects Initialized", HealthObjectsArray.Num());
 	}
 }
 

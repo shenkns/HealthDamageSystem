@@ -1,11 +1,14 @@
-// Copyright shenkns Health-Damage System Developed With Unreal Engine. All Rights Reserved 2022.
+// Copyright shenkns Health-Damage System Developed With Unreal Engine. All Rights Reserved 2023.
 
 #include "HealthObjects/HealthBase.h"
 
+#include "Log.h"
 #include "Module/HealthDamageSystemModule.h"
 #include "Components/HealthComponent.h"
-#include "LogSystem.h"
+#include "Log/Details/LocalLogCategory.h"
 #include "Net/UnrealNetwork.h"
+
+DEFINE_LOG_CATEGORY_LOCAL(LogHealthDamageSystem);
 
 void UHealthBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -65,14 +68,14 @@ void UHealthBase::InitHealthObject(UHealthHandlerDataAsset* HealthHandlerDataAss
 		CurrentHealth = MaxHealth;
 	}
 
-	LOG(LogHealthDamageSystem, "%s Health Object Intializaed", *GetName())
+	LOG(Display, "{} Health Object Intializaed", *GetName());
 }
 
 void UHealthBase::OnRepCurrentHealth()
 {
 	OnHealthChanged.Broadcast(CurrentHealth, CurrentHealth - OldHealth);
 
-	LOG(LogHealthDamageSystem, "%s Health Changed On %f From %f To %f", *GetName(), CurrentHealth - OldHealth, OldHealth, CurrentHealth)
+	LOG(Display, "{} Health Changed On {} From {} To {}", *GetName(), CurrentHealth - OldHealth, OldHealth, CurrentHealth);
 
 	OldHealth = CurrentHealth;
 }
@@ -83,6 +86,6 @@ void UHealthBase::OnRepIsEnded()
 	{
 		OnHealthEnded.Broadcast();
 
-		LOG(LogHealthDamageSystem, "%s Health Ended", *GetName())
+		LOG(Display, "{} Health Ended", *GetName());
 	}
 }
